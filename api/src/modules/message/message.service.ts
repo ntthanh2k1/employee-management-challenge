@@ -80,9 +80,13 @@ const sendMessage = async (
   });
 
   const receiverSocketId = getReceiverSocketId(receiverId);
+  console.log("receiverId:", receiverId);
+  console.log("receiverSocketId:", receiverSocketId);
+
   if (receiverSocketId) {
     io.to(receiverSocketId).emit("newMessage", newMessage);
   }
+  console.log(receiverSocketId);
 
   return {
     message: "Send message successfully.",

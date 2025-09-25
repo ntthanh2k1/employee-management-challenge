@@ -28,6 +28,7 @@ io.on("connection", (socket) => {
 
   const userId = socket.data.userId;
   userSocketMap[userId] = socket.id;
+  console.log("userSocketMap updated:", userSocketMap);
 
   // io.emit() is used to send events to all connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));

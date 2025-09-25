@@ -10,11 +10,11 @@ const socketioAuthMiddleware = async (socket: any, next: NextFunction) => {
   try {
     const accessToken = socket.handshake.headers.cookie
       ?.split("; ")
-      .find((row: string) => row.startsWith("jwt="))
+      .find((row: string) => row.startsWith("access_token="))
       ?.split("=")[1];
 
     if (!accessToken) {
-      return next(new CustomError("No Token Provided.", 401));
+      return next(new CustomError("Token  not provided.", 401));
     }
 
     const decoded = verifyToken(accessToken, process.env.ACCESS_TOKEN_SECRET);

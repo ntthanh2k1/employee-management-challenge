@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMessageStore } from "../../store/message/use-message-store";
 
 const Message = () => {
@@ -16,22 +16,28 @@ const Message = () => {
     loading,
     error,
   } = useMessageStore();
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     getContacts();
   }, []);
 
   useEffect(() => {
-    if (!selectedUserId) return;
+    if (!selectedUserId) {
+      return;
+    }
 
     let cancelled = false;
-    (async () => {
+    const initMessages = async () => {
       clearMessages();
       await getMessagesByUserId(selectedUserId);
+
       if (!cancelled) {
         subscribeToMessages();
       }
-    })();
+    };
+
+    initMessages();
 
     return () => {
       cancelled = true;
@@ -56,6 +62,13 @@ const Message = () => {
     await sendMessage(selectedUserId, { content: newMessage });
     setNewMessage("");
   };
+
+  useEffect(() => {
+    if (messages.length && messagesContainerRef.current) {
+      const el = messagesContainerRef.current;
+      el.scrollTop = el.scrollHeight;
+    }
+  }, [messages]);
 
   return (
     <>
@@ -85,7 +98,10 @@ const Message = () => {
             </ul>
           </div>
           <div className="flex flex-col w-full h-full">
-            <div className="flex flex-col flex-1 scrollbar-hidden overflow-y-auto p-4">
+            <div
+              ref={messagesContainerRef}
+              className="flex flex-col flex-1 scrollbar-hidden overflow-y-auto p-4"
+            >
               {loading && <p className="text-gray-500">Loading...</p>}
               {error && <p className="text-red-500">{error}</p>}
               {messages.map((msg) => (

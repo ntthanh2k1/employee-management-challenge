@@ -88,7 +88,8 @@ export const useMessageStore = create<MessageState>((set, get) => ({
 
     socket.on("newMessage", (newMessage: Message) => {
       const isMessageSentFromSelectedUser =
-        newMessage.senderId === selectedUserId;
+        newMessage.senderId === selectedUserId ||
+        newMessage.receiverId === selectedUserId;
 
       if (!isMessageSentFromSelectedUser) {
         return;
